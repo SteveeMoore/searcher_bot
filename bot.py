@@ -2,6 +2,7 @@ import os
 from dotenv import load_dotenv
 from aiogram import Bot, Dispatcher, types
 from aiogram.filters import Command
+from database import get_db_connection
 
 load_dotenv()
 
@@ -15,6 +16,15 @@ async def start(message: types.Message):
 async def main():
     await dp.start_polling(bot)
 
+
+async def test_db():
+    conn = await get_db_connection()
+    version = await conn.fetchval("SELECT version();")
+    print(f"Подключено к PostgreSQL: {version}")
+    await conn.close()
+
+
 if __name__ == "__main__":
     import asyncio
-    asyncio.run(main())
+    asyncio.run(test_db())  # Тест БД
+    asyncio.run(main())     # Запуск бота
